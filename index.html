@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BabbageMN HDL & the Hyperbolic Braid Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Garamond', 'Georgia', serif;
+            line-height: 1.7;
+            color: #2c2416;
+            background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fdfbf7;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid #c9b896;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4a3f2f 0%, #2c2416 100%);
+            color: #f5e6d3;
+            padding: 50px 40px;
+            text-align: center;
+            border-bottom: 3px solid #8b7355;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '⚙';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            top: -30px;
+            right: -20px;
+            transform: rotate(15deg);
+        }
+
+        h1 {
+            font-size: 2.8em;
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            font-style: italic;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .attribution {
+            margin-top: 20px;
+            font-size: 0.95em;
+            opacity: 0.8;
+            font-variant: small-caps;
+            letter-spacing: 2px;
+        }
+
+        main {
+            padding: 50px 60px;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #4a3f2f;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #c9b896;
+            padding-bottom: 10px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            color: #5a4d3a;
+            margin: 30px 0 15px;
+            font-weight: 400;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 1.05em;
+        }
+
+        .intro {
+            font-size: 1.15em;
+            line-height: 1.8;
+            color: #3a3020;
+            padding: 30px;
+            background: #f9f5ee;
+            border-left: 4px solid #8b7355;
+            margin-bottom: 40px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: #faf7f2;
+            padding: 25px;
+            border: 1px solid #d4c4a8;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #8b7355;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .feature-card h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #4a3f2f;
+        }
+
+        .feature-card p {
+            font-size: 0.95em;
+            margin: 0;
+        }
+
+        .downloads {
+            background: #4a3f2f;
+            color: #f5e6d3;
+            padding: 40px;
+            margin: 50px -60px -50px;
+            text-align: center;
+        }
+
+        .downloads h2 {
+            color: #f5e6d3;
+            border-bottom-color: #8b7355;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: #8b7355;
+            color: #fdfbf7;
+            text-decoration: none;
+            font-size: 1.1em;
+            border: 2px solid #a08668;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            font-variant: small-caps;
+        }
+
+        .download-btn:hover {
+            background: #a08668;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .highlight {
+            background: #f9f5ee;
+            border: 1px solid #d4c4a8;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #8b7355;
+        }
+
+        .ornament {
+            text-align: center;
+            font-size: 2em;
+            color: #c9b896;
+            margin: 40px 0;
+            user-select: none;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .downloads {
+                margin: 50px -25px -30px;
+                padding: 30px 20px;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .download-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BabbageMN HDL</h1>
+            <div class="subtitle">A Universal Language of Signs for Purely Mechanical Engines</div>
+            <div class="attribution">— Prepared by Decorus —</div>
+        </header>
+
+        <main>
+            <section class="intro">
+                <p><strong>Mechanical computing</strong> represents the art and science of performing calculations through the purely physical motion of gears, levers, cams, and other mechanical elements—without recourse to electricity, magnetism, or semiconductor physics. In the 1830s, <strong>Charles Babbage</strong> conceived his Analytical Engine, a visionary machine that would have embodied the principles of programmable computation through entirely mechanical means, featuring a mill (processor), store (memory), and punched-card control. Though never completed in his lifetime, Babbage's designs established the theoretical foundation for all computing machinery.</p>
+                
+                <p>The <strong>BabbageMN Hardware Description Language</strong> presented here revives and formalizes Babbage's original "mechanical notation"—a rigorous language of signs for specifying the form, timing, causation, and governance of mechanical engines. By providing a design-agnostic framework grounded in <em>Form</em> (apparatus), <em>Periods</em> (timing), <em>Trains</em> (causation), <em>Guards</em> (interlocks), and <em>Proof</em> (verification), BabbageMN enables engineers to reason about mechanical systems with mathematical certainty before construction, much as modern HDLs do for electronic circuits.</p>
+                
+                <p>The <strong>Hyperbolic Braid Engine</strong> (HBE) demonstrates BabbageMN's power through a complete, universal mechanical computer design featuring balanced-digit arithmetic, self-locating braided tape storage, function synthesis via Chebyshev cams with whisper correction, and collision-free polyphase scheduling. Together, these works point toward a potential future niche: in applications demanding <strong>electromagnetic immunity</strong>, <strong>radiation hardness</strong>, <strong>cryptographic air-gapping</strong>, or <strong>century-scale archival computing</strong>, purely mechanical systems offer intrinsic advantages that no silicon-based technology can match. Where electrons falter, gears endure.</p>
+            </section>
+
+            <div class="ornament">⚙ ❧ ⚙</div>
+
+            <section>
+                <h2>The BabbageMN Language</h2>
+                <p>BabbageMN provides a universal, design-agnostic framework for describing mechanical computing engines in the Victorian tradition. Drawing directly from Babbage's original mechanical notation, it establishes:</p>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>Alphabet of Form</h3>
+                        <p>A canonical system of 90 signs covering pieces (wheels, levers, cams), motions (circular, linear, oscillatory), couplings (meshes, clutches, ratchets), and governance elements—with strict letter-laws distinguishing frames, pieces, and working points.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>Periods & Timing</h3>
+                        <p>Precise ledgers of when motions are admitted or detained, when engagements form or release, and how settle slots prevent race conditions—all without presuming any particular clock rate or geometry.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>Trains of Causation</h3>
+                        <p>Explicit chains showing how entrances admit clutches, how working points convey motion between pieces, and how guards forbid or permit actions—establishing clear precedence and preventing derangement.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>Guards & Interlocks</h3>
+                        <p>Mechanical patterns for mutual exclusion, precedence ordering, temporal majority voting, and safety stops—ensuring that no two stanzas seize the same coupling simultaneously.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>Proof Obligations</h3>
+                        <p>Self-necessary verifications for identity consistency, admission safety, timing sufficiency, and termination of loops—enabling paper-proof of correctness before the expense of construction.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>Tables of the Work</h3>
+                        <p>Structured ledgers documenting operations, variables, periods consumed, guards active, and audit trails—the mechanical equivalent of assembly listings and timing diagrams.</p>
+                    </div>
+                </div>
+
+                <div class="highlight">
+                    <p><strong>Key Innovation:</strong> BabbageMN binds no engineer to specific dimensions, tooth counts, or materials. It is a <em>language of logical relations</em>—a means to specify <strong>what must happen when</strong> without dictating <strong>how large or of what metal</strong>. This separation allows mechanical designs to be reasoned about, verified, and evolved with the same rigor applied to electronic systems.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>The Hyperbolic Braid Engine</h2>
+                <p>The HBE is a complete specification for a universal mechanical computer, written entirely in BabbageMN, demonstrating the language's expressiveness through:</p>
+
+                <h3>The Triune Store</h3>
+                <ul>
+                    <li><strong>Decimal Store:</strong> Balanced-digit arithmetic (–5…+4) with carry-save accumulation and scheduled reconciliation to prevent cascading carries</li>
+                    <li><strong>Plate Registers:</strong> Two-position governance plates with temporal-majority reading to eliminate metastability</li>
+                    <li><strong>Braid Magazine:</strong> Self-locating tape storage using four residue lanes (mod 5, 7, 9, 11) for absolute position recovery via Chinese Remainder Theorem—spanning 3,465 unique positions without external indexing</li>
+                </ul>
+
+                <h3>The Symplectic Mill</h3>
+                <ul>
+                    <li><strong>Differential Integrators:</strong> Natural accumulation and subtraction through meshing</li>
+                    <li><strong>Function Cams:</strong> Logarithmic and exponential synthesis using Chebyshev node placement (9 nodes) with whisper correction—achieving ≤3×10⁻⁴ full-scale error</li>
+                    <li><strong>Rotation Engine:</strong> Dyadic lever scales (1:1, 1:2, 1:4…1:512) implementing CORDIC-like trigonometric computation through palindromic micro-stanzas, with single normalizing stroke (135:82 ratio)</li>
+                </ul>
+
+                <h3>Latin-Square Scheduling</h3>
+                <p>A collision-free timetable ensuring that the four coupling classes (Store, Braid, Mill, Print) are never simultaneously seized, with polyphase execution preventing mechanical interference.</p>
+
+                <h3>Two Paths to Universality</h3>
+                <ul>
+                    <li><strong>Two-Counter Calculus:</strong> INC, DECZ, CLEAR, COPY primitives sufficient for Minsky-style universal computation</li>
+                    <li><strong>Braid-Head Clerk:</strong> Tape step, read, write, and branch operations implementing a universal Turing machine with self-witnessing symbols and error detection</li>
+                </ul>
+
+                <div class="highlight">
+                    <p><strong>Audit & Verification:</strong> The HBE includes congruence wheels (mod 9, mod 11) for arithmetic checking, parity witnesses on the braid tape, and a comprehensive proof ledger demonstrating termination of all loops, bounded numerical errors, and absence of timing hazards—all without presuming any particular scale or manufacture.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>A Future for Mechanical Computing</h2>
+                <p>While silicon-based electronics excel in speed and miniaturization, purely mechanical computation offers unique advantages in specialized domains:</p>
+                
+                <ul>
+                    <li><strong>Electromagnetic Immunity:</strong> Immune to electromagnetic pulses, solar storms, and radio interference</li>
+                    <li><strong>Radiation Hardness:</strong> No semiconductors to be corrupted by ionizing radiation in space or nuclear environments</li>
+                    <li><strong>Cryptographic Air-Gapping:</strong> Physically incapable of wireless emanations; no Van Eck phreaking or TEMPEST vulnerabilities</li>
+                    <li><strong>Archival Computing:</strong> Centuries-long operational life with materials more durable than silicon; no bit rot, no obsolescence</li>
+                    <li><strong>Transparent Operation:</strong> Every calculation is mechanically observable; no hidden microcode or supply-chain implants</li>
+                    <li><strong>Environmental Extremes:</strong> Operable in temperature ranges and pressures that destroy electronics</li>
+                </ul>
+
+                <p>In these niches—spacecraft control systems, nuclear facility interlocks, long-term archival repositories, high-security cryptographic operations—mechanical computing is not a curiosity but a <em>necessity</em>. Where electronics are vulnerable, mechanics endure. Where silicon is suspect, brass is trustworthy.</p>
+
+                <p>Moreover, the convergence of <strong>advanced metamaterials</strong>, <strong>topologically-optimized lattice structures</strong>, and <strong>aerospace-grade precision engineering</strong> promises to transcend the limitations of Victorian-era manufacturing. Imagine mechanical computers fabricated from carbon-fiber composites, titanium alloy micro-lattices, and diamond-like carbon coatings—achieving tolerances measured in nanometers through additive manufacturing and precision machining. Such systems could operate at frequencies approaching electronic rates while maintaining mechanical robustness, achieve power densities competitive with modern processors through optimized energy recovery, and integrate seamlessly with MEMS-scale actuators for hybrid architectures. This fusion of classical mechanical principles with 21st-century materials science could unlock <em>entirely new application domains</em>: embedded aerospace avionics immune to cosmic radiation, ultra-secure financial transaction processors physically incapable of remote compromise, and computational substrates for deep-space missions lasting centuries. The future of mechanical computing need not be confined to niche applications—it may yet become a complementary paradigm, offering reliability and security properties that no amount of silicon refinement can achieve.</p>
+            </section>
+
+            <div class="ornament">⚙ ❧ ⚙</div>
+
+            <section class="downloads">
+                <h2>Obtain the Specifications</h2>
+                <p>Both documents are provided in their complete form, suitable for study, implementation, or extension.</p>
+                
+                <div class="download-buttons">
+                    <a href="babbage_mn_hdl.md" class="download-btn" download>
+                        Download BabbageMN HDL
+                    </a>
+                    <a href="hyperbolic_braid_engine.md" class="download-btn" download>
+                        Download HBE Specification
+                    </a>
+                </div>
+                
+                <p style="margin-top: 30px; font-size: 0.95em; opacity: 0.8;">
+                    These works are made available in Markdown format for maximum accessibility and longevity.<br>
+                    <em>Prepared and published by Decorus.</em>
+                </p>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
